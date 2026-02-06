@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react"; 
 import Platform from "../layouts/Platform";
 import { Button } from "antd";
-import { LogoutOutlined,ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { LogoutOutlined,ClockCircleOutlined, UserOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { authService } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import api from "../utils/api";
 import NotReady from "../components/NotReady";
 import CardAbsensi from "../components/CardAbsensi";
+import { Absensi } from "../../../server/interface";
 
 export default function Home(){
     const user = authService.getCurrentUser();
@@ -48,7 +49,7 @@ export default function Home(){
         return data;
     }
     const [loading, setloading] = useState(false);
-    const [data, setdata] = useState([]);
+    const [data, setdata] = useState<Absensi[]>([]);
     useEffect(()=>{
         (async()=>{
             setloading(true)
@@ -81,13 +82,32 @@ export default function Home(){
                             <p className="text-gray-400">{dayjs().format("YYYY-MM-DD")}</p>
                         </div>
                         <div className="flex justify-between space-x-2"> 
-                             <Button variant="solid" color="green" className="!w-full" onClick={()=>goCheckin("clockin")}>
-                                <ClockCircleOutlined />
-                                Clockin
-                            </Button>
-                             <Button className="!w-full" onClick={()=>goCheckin("clockout")}>
-                                <LogoutOutlined  /> Clockout
-                            </Button>
+                            
+                            {data.some(v=>v.type == 'clockin') ? (
+                                <Button variant="solid" color="green" className="!w-full" >
+                                    <CheckCircleOutlined />
+                                    Sudah Clockin
+                                </Button>
+                            ):  (
+                                 <Button variant="solid" color="green" className="!w-full" onClick={()=>goCheckin("clockin")}>
+                                    <ClockCircleOutlined />
+                                    Clockin
+                                </Button>
+                            )}
+                            
+                            {data.some(v=>v.type == 'clockout') ? (
+                                <Button variant="solid"   className="!w-full" >
+                                    <CheckCircleOutlined />
+                                    Sudah Clockout
+                                </Button>
+                            ):  (
+                                <Button className="!w-full" onClick={()=>goCheckin("clockout")}>
+                                    <LogoutOutlined  /> Clockout
+                                </Button>
+                            )}
+                            
+                            
+                           
                         </div>
                     </div>
                     <div>

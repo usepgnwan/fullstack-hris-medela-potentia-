@@ -71,7 +71,14 @@ export class KaryawanService {
   async findAllPaginated(take: number, page: number) {
     const skip = (page - 1) * take; 
     const [data, total] = await this.repo.findAndCount({
-      select: ['id', 'nama', 'username', 'role'],
+      select: [
+            'nama',
+            'username',
+            'jabatan',
+            'role',
+            'created_at',
+            'update_at',
+      ],
       take,
       skip,
     });

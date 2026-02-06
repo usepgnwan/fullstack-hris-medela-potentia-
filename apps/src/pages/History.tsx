@@ -7,45 +7,51 @@ import api from "../utils/api";
 import { authService } from "../services/authService";
 import NotReady from "../components/NotReady";
 import CardAbsensi from "../components/CardAbsensi";
+import { Absensi } from "../../../server/interface";
 
 export default function History(){
 
-    
+    const [hasMore, setHasMore] = useState(true);
+    const [page, setPage] = useState<Number>(1);
     const user = authService.getCurrentUser();
-    const getAbsenToday = async () =>{
-        const date = dayjs().format("YYYY-MM-DD");
-        const id = user.id;
-       const data = await api.get('/absensi', {
+    const [loading, setloading] = useState(false);
+    const [data, setdata] = useState<Absensi[]>([]);
+
+    const getAbsenToday = async (page:number) =>{ 
+    const id = user.id;
+       const data = await api.get(`/absensi?limit=5&page=${page}`, {
                 params: {
-                    date: date,
-                    karyawanID: id,
+                    karyawanID: id 
                 },
         });
-        return data;
+        if(page == 1){
+            setdata((prev:any) => [  ...data.data.data ]);
+       }else{
+           setdata((prev:any) => [...prev, ...data.data.data ]);
+       } 
+       setHasMore(data.data.data.length>0)
     }
-    const [loading, setloading] = useState(false);
-    const [data, setdata] = useState([]);
     useEffect(()=>{
         (async()=>{
             setloading(true)
-            await getAbsenToday().then((v)=>{
-                console.log(v)
-                setdata(v.data.data ?? [])
+            await getAbsenToday(1).then((v)=>{
+              
                 setloading(false)
             }).finally(()=>{
                 setloading(false);
             })
         })()
     },[])
+    const loadMore =async () => {
+        const nextPage = Number(page) + 1;
+        setPage(nextPage);
+        await getAbsenToday(nextPage);
+    };
     return (
         <React.Fragment> 
             <Platform>
                 <div className="p-5 space-y-5">
-                    {/* <div className="flex items-center gap-3 rounded-full border p-2"> 
-                        <div className="flex flex-col leading-tight px-4">
-                            <p className="font-medium">History Absensi</p> 
-                        </div>
-                    </div>  */}
+                
                     <div>
                         <h4 className="text-lg font-semibold">History Absensi</h4>
                         <div>
@@ -68,6 +74,11 @@ export default function History(){
                         </div>
                     </div>
                 </div>
+                  {!loading && hasMore && (
+                        <div className="mt-4 flex items-center justify-center">
+                        <Button onClick={loadMore}>more</Button>
+                    </div>
+                    )}
             </Platform>
         </React.Fragment>
     )

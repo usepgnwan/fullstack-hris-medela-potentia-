@@ -5,6 +5,7 @@ const Login = React.lazy(() => import('../pages/Index'));
 const Platform = React.lazy(() => import('../pages/Home')); 
 const History = React.lazy(() => import('../pages/History')); 
 const Clockin = React.lazy(() => import('../pages/Clockin')); 
+const Karyawan = React.lazy(() => import('../pages/Karyawan')); 
  
  
 export interface MenuItem {
@@ -46,6 +47,13 @@ export const menuConfig: MenuItem[] = [
     path: '/clockin',
     name: 'clockin', 
     component: Clockin, 
+    guest: false
+  },
+  {
+    id: 'karyawan',
+    path: '/karyawan',
+    name: 'karyawan', 
+    component: Karyawan, 
     guest: false
   },
  

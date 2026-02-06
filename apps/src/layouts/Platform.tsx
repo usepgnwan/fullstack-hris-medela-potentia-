@@ -1,4 +1,4 @@
-import { ExclamationCircleFilled, HistoryOutlined, HomeOutlined, LogoutOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled, HistoryOutlined, HomeOutlined, LogoutOutlined, UserAddOutlined } from "@ant-design/icons";
 import { PropsWithChildren, useEffect } from "react";
 import { authService } from "../services/authService";
 import { Link, NavLink, useLocation, useNavigate, useRoutes } from "react-router-dom";
@@ -6,6 +6,7 @@ import { Modal } from "antd";
 import { ToastContainer } from "react-toastify";
 
 export default function Platform({ children }: PropsWithChildren) { 
+    const user = authService.getCurrentUser();
     const location = useLocation();
     const path = location.pathname
 
@@ -32,7 +33,7 @@ export default function Platform({ children }: PropsWithChildren) {
             // console.log(path)
             localStorage.removeItem("clockin")
         }
-    },[])
+    },[]) 
     return (
             <> 
                 <div className="mx-auto bg-white max-w-md min-h-screen pb-24">
@@ -48,7 +49,7 @@ export default function Platform({ children }: PropsWithChildren) {
                 </div> 
                 {path !== "/clockin"&& ( 
                     <div className="fixed min-h-16 bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-                        <div className="grid grid-cols-3">
+                        <div className={`grid grid-cols-3 ${user.role == "HR" ? 'grid-cols-4' : 'grid-cols-3'}`}>
                         <NavLink 
                                 to="/home"
                                 className={({ isActive }) =>
@@ -67,6 +68,17 @@ export default function Platform({ children }: PropsWithChildren) {
                                 <HistoryOutlined />
                                 <p className="text-xs mt-1">History</p>
                             </NavLink > 
+                            {user.role === "HR" && (
+                                <NavLink  to="/karyawan"  
+                                    className={({ isActive }) =>
+                                        `flex flex-col items-center justify-center text-center
+                                        ${isActive ? "text-blue-600" : "text-black"}`
+                                    } >
+                                    <UserAddOutlined />
+                                    <p className="text-xs mt-1">Karyawan</p>
+                                </NavLink > 
+                            )}
+                            
                             <div className="flex flex-col items-center justify-center text-center cursor-pointer" onClick={logout}>
                                 <LogoutOutlined />
                                 <p className="text-xs mt-1">Logout</p>

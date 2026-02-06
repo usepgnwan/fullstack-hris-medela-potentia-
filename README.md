@@ -1,5 +1,10 @@
 ## 1. RUNNING APPS FE
 akses : http://hris-medela-potentia.usepgnwan.my.id/
+akun staff akses :
+{
+  "username": "john.doe@example.com",
+  "password": "password"
+}
 ```
 npm run start
 ```

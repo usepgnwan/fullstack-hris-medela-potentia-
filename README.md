@@ -1,4 +1,10 @@
 ## 1. RUNNING APPS FE
+akses : http://hris-medela-potentia.usepgnwan.my.id/
+akun staff akses :
+{
+  "username": "john.doe@example.com",
+  "password": "password"
+}
 ```
 npm run start
 ```
@@ -8,6 +14,7 @@ npm run start
 <img width="559" height="921" alt="image" src="https://github.com/user-attachments/assets/d4ccc0cf-d1f9-409a-8b35-a0a44f9ad31c" />
 
 ## 2. CREATE APP BE
+akses : https://behris-medela-potentia.usepgnwan.my.id/api
 ```
 nest new server
 npm install @nestjs/typeorm typeorm pg class-validator class-transformer

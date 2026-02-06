@@ -9,10 +9,7 @@ import dayjs from "dayjs";
 export default function Home(){
     const user = authService.getCurrentUser();
     const navigate = useNavigate()
-    const goCheckin = (type : string) =>{
-        localStorage.setItem("clockin",type)
-        navigate("/clockin") 
-    }
+
     
      const startClockDayjs =(  setter: (value: string) => void ): number =>{
       const tick = () => setter(dayjs().format("HH:mm"));
@@ -23,12 +20,17 @@ export default function Home(){
     const [time, setTime] = useState("00:00");
     
     useEffect(() => {
-        const timer = startClockDayjs(setTime);
-
+        const timer = startClockDayjs(setTime); 
         return () => {
-            clearInterval(timer); // WAJIB cleanup
+            clearInterval(timer);  
         };
-        }, []);
+    }, []);
+    
+    const goCheckin = (type : string) =>{
+        localStorage.setItem("clockin",type)
+        localStorage.setItem("time",time)
+        navigate("/clockin") 
+    }
     return (
         <React.Fragment>
            

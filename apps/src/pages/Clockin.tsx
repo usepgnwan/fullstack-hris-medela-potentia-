@@ -72,9 +72,12 @@ export default function Clockin(){
 
 
     const onFinish =async (values: any) => {   
+        const time  =localStorage.getItem("time") ;
         const newValues = {
-            ...values,   
-            file:file
+            ...values,
+            file:file,
+            time:time,
+            date: values.date.format('YYYY-MM-DD')
         }
         console.log(newValues)  
         toast.warning("Failed")

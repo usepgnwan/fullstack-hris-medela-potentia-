@@ -8,9 +8,11 @@ import CameraCapture from "../components/CameraCapture";
 import { CameraOutlined } from "@ant-design/icons";
 import Maps from "../components/Maps";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { authService } from "../services/authService";
 
 export default function Clockin(){
- 
+     const user = authService.getCurrentUser();
     const type = localStorage.getItem("clockin");
     const [file, setFile] = useState("");
     const [form] = Form.useForm(); 
@@ -70,19 +72,28 @@ export default function Clockin(){
         return data;
     };
 
-
+    const navigate = useNavigate()
+    const [loading, setloading] = useState(false);
     const onFinish =async (values: any) => {   
         const time  =localStorage.getItem("time") ;
         const newValues = {
             ...values,
             file:file,
             time:time,
+            type:type,
+            karyawan_id:user.id,
             date: values.date.format('YYYY-MM-DD')
         }
-        console.log(newValues)  
-        toast.warning("Failed")
+        setloading(true)
+        await api.post("/absensi",JSON.stringify(newValues)).then(()=>{ 
+            toast.success("Success clockin")
+              setloading(false)
+            return navigate("/")
+        }).catch(()=>{
+              setloading(false)
+            toast.success("Error clockin")
+        })
     };
-    const navigate = useNavigate()
     useEffect(()=>{
         if(localStorage.getItem("clockin") == undefined){
             navigate("/") 
@@ -106,7 +117,7 @@ export default function Clockin(){
                         > 
                         <div className="min-h-36 overflow-hidden mb-5"> 
                             {!proccesmap && form.getFieldValue("lat") !== undefined ?(
-                                 <Maps lang={form.getFieldValue("lat")} lat={form.getFieldValue("lng")} address={form.getFieldValue("address")}/>
+                                 <Maps lang={form.getFieldValue("lng")} lat={form.getFieldValue("lat")} address={form.getFieldValue("address")}/>
                             ):(
                                 <p>Loading map</p>
                             )}
@@ -156,7 +167,7 @@ export default function Clockin(){
                         
                        <div  className="fixed -bottom-2 left-1/2 -translate-x-1/2 w-full max-w-md bg-white p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
                              <Form.Item>
-                                <Button block type="primary" htmlType="submit" className="!w-full">  Submit </Button> 
+                                <Button disabled={loading} block type="primary" htmlType="submit" className="!w-full">  Submit </Button> 
                             </Form.Item>
                        </div>
                     </Form>

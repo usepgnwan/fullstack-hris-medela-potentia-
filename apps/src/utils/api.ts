@@ -29,7 +29,7 @@ api.interceptors.request.use(
     if (config.method?.toLowerCase() === 'post' || 
         config.method?.toLowerCase() === 'put' || 
         config.method?.toLowerCase() === 'delete') {
-      config.headers['X-Signature'] = generateSignature(config.data, timestamp);
+      // config.headers['X-Signature'] = generateSignature(config.data, timestamp);
     }
      
     if (token) {
@@ -112,8 +112,8 @@ export const getWithSignature = async <T>(
       params,
       headers: {
         'X-Timestamp': timestamp,
-        'X-Signature': signature,
-        'X-Signature-Data': JSON.stringify(signatureData),
+        // 'X-Signature': signature,
+        // 'X-Signature-Data': JSON.stringify(signatureData),
       }
     };
     

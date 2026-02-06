@@ -29,7 +29,7 @@ export class KaryawanController {
           username: 'john.doe@example.com',
           jabatan: 'Software Engineer',
           role: 'HR', 
-          password: 'passsword',  
+          password: 'password',  
         }
       }
     }
@@ -115,7 +115,7 @@ export class KaryawanController {
       example: { 
         value: { 
           username: 'john.doe@example.com', 
-          password: 'passsword',  
+          password: 'password',  
         }
       }
     }

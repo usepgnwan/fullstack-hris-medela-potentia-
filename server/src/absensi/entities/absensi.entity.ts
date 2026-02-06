@@ -31,12 +31,13 @@ export class Absensi {
   file: string;
 
   @IsOptional()
-  @Column({ type: 'decimal', precision: 10, scale: 7 })
-  lat: number;
+  
+  @Column()
+  lat: string;
 
   @IsOptional()
-  @Column({ type: 'decimal', precision: 10, scale: 7 })
-  lng: number;
+  @Column()
+  lng: string;
 
   @IsOptional()
   @Column({ type: 'time' })

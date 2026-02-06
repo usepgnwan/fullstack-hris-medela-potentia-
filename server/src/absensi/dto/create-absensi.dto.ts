@@ -10,9 +10,9 @@ export class CreateAbsensiDto {
     @IsNotEmpty()
     file: string;
     @IsNotEmpty()
-    lat: number;
+    lat: string;
     @IsNotEmpty()
-    lng: number;
+    lng: string;
     @IsNotEmpty()
     time: string;
     @IsNotEmpty()

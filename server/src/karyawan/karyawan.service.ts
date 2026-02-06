@@ -39,12 +39,14 @@ export class KaryawanService {
       where: { username: dto.username },
     }); 
 
+   
     if (!existing) throw new NotFoundException('Username tidak ditemukan');
  
-    const match = await bcrypt.compare(dto.password, existing.password);
+    const match = await bcrypt.compare(dto.password.trim(), existing.password);
+    console.log(dto.password)
     if (!match) throw new UnauthorizedException('Password salah');
  
-    const payload = { id: existing.id, username: existing.username, role: existing.role };
+    const payload = { id: existing.id, username: existing.username, role: existing.role, name:existing.nama, jabatan:existing.jabatan};
     const token = this.jwtService.sign(payload);
  
     const { password, ...userData } = existing;

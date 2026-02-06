@@ -14,7 +14,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 export default function Maps({lat, lang,address}:{lat :number, lang:number,address:string}) {
-  const position: LatLngTuple = [lang,lat];
+  console.log(lat)
+  const position: LatLngTuple = [lat,lang];
 
   return (
     <MapContainer

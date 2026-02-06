@@ -1,9 +1,42 @@
-import React from "react"; 
+import React, { useEffect, useState } from "react"; 
 import Platform from "../layouts/Platform";
 import { Button } from "antd";
 import { LogoutOutlined,ClockCircleOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
+import api from "../utils/api";
+import { authService } from "../services/authService";
+import NotReady from "../components/NotReady";
+import CardAbsensi from "../components/CardAbsensi";
 
 export default function History(){
+
+    
+    const user = authService.getCurrentUser();
+    const getAbsenToday = async () =>{
+        const date = dayjs().format("YYYY-MM-DD");
+        const id = user.id;
+       const data = await api.get('/absensi', {
+                params: {
+                    date: date,
+                    karyawanID: id,
+                },
+        });
+        return data;
+    }
+    const [loading, setloading] = useState(false);
+    const [data, setdata] = useState([]);
+    useEffect(()=>{
+        (async()=>{
+            setloading(true)
+            await getAbsenToday().then((v)=>{
+                console.log(v)
+                setdata(v.data.data ?? [])
+                setloading(false)
+            }).finally(()=>{
+                setloading(false);
+            })
+        })()
+    },[])
     return (
         <React.Fragment> 
             <Platform>
@@ -15,42 +48,23 @@ export default function History(){
                     </div>  */}
                     <div>
                         <h4 className="text-lg font-semibold">History Absensi</h4>
-                        <div className="space-y-3">
-                            <div className="border rounded-2xl p-4">
-                                <div className="flex gap-4 items-center">
-                                    <div className="rounded-full w-16 h-16 bg-slate-500 shrink-0"></div> 
-                                    <div className="flex-1 text-sm text-gray-700  ">
-                                        <div className="flex space-x-2 items-center">
-                                            <div className="rounded-2xl px-3 bg-blue-700 text-white">Clock In</div>
-                                            <div className="rounded-2xl px-3 bg-red-700 text-white w-12">Telat</div>
-                                            <p className="text-lg font-semibold">80:01</p>
+                        <div>
+                            {!loading && data.length <= 0 ?(
+                                <NotReady />
+                            ):(
+                                <React.Fragment>
+                                    {loading ?(
+                                        <div className="h-48 text-center flex items-center justify-center text-xl font-bold">
+                                            <p>loading </p>
                                         </div>
-                                        <p className="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo, enim! Quod blanditiis sequi voluptatem tempore distinctio aut, dolore neque labore dolorum nihil iusto natus non praesentium quia dolores, molestias fugiat.</p>
-                                        <div className="grid grid-cols-3 mt-2">
-                                            <p className="text-xs">2025-01-01</p>
-                                            <p className="text-xs">lat : 12231</p>
-                                            <p className="text-xs">lang :13232</p>
-                                        </div> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border rounded-2xl p-4">
-                                <div className="flex gap-4 items-center">
-                                    <div className="rounded-full w-16 h-16 bg-slate-500 shrink-0"></div> 
-                                    <div className="flex-1 text-sm text-gray-700  ">
-                                        <div className="flex space-x-2 items-center">
-                                            <div className="rounded-2xl px-3 bg-blue-700 text-white">Clock In</div>
-                                            <p className="text-lg font-semibold">80:01</p>
-                                        </div>
-                                        <p className="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo, enim! Quod blanditiis sequi voluptatem tempore distinctio aut, dolore neque labore dolorum nihil iusto natus non praesentium quia dolores, molestias fugiat.</p>
-                                        <div className="grid grid-cols-3 mt-2">
-                                            <p className="text-xs">2025-01-01</p>
-                                            <p className="text-xs">lat : 12231</p>
-                                            <p className="text-xs">lang :13232</p>
-                                        </div> 
-                                    </div>
-                                </div>
-                            </div>
+                                    ):(
+                                    <React.Fragment> 
+                                        <CardAbsensi data={data} />
+                                    </React.Fragment>
+                                    )}
+                                </React.Fragment>
+                            )}
+    
                         </div>
                     </div>
                 </div>

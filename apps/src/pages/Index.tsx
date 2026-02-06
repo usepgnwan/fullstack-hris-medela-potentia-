@@ -2,20 +2,23 @@
 import { Button, Form, Input } from "antd";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import api from "../utils/api";
-import { toast  } from "react-toastify"; 
+import { toast, ToastContainer  } from "react-toastify"; 
 import { authService } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 export default function Index(){
   
     const navigate = useNavigate();
     const onFinish =async (values: any) => {   
-        await api.post('/users/login',values).then((v)=>{ 
+        await api.post('/karyawan/login',values).then((v)=>{ 
+            authService.setAuthData(v.data.data.token) 
             navigate("/home")
-            authService.setAuthData(v.data.token)
             return toast.warning("Login Sukses")
         }).catch((e)=>{ 
             if (e.response?.status === 401){ 
                 return toast.warning("Username/password salah")
+            }
+            if (e.response?.status === 404){  
+                return toast.warning(e.response?.data.error)
             }
 
             toast.warning("Failed")
@@ -57,6 +60,7 @@ export default function Index(){
                     </Form>
                </div>
             </div>
+            <ToastContainer position="top-center" autoClose={3000} />
         </section>
     )
 }

@@ -19,6 +19,16 @@ async function bootstrap() {
   // Setup endpoint Swagger UI (bisa diakses di /api)
   SwaggerModule.setup('api', app, document);
   app.use('/uploads', express.static(join(__dirname, '..', 'public/uploads')));
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
+  app.use(
+    express.json({ limit: '20mb' })  
+  );
+  app.use(
+    express.urlencoded({ limit: '20mb', extended: true })
+  );
   console.log("app running on : " + (process.env.PORT ?? 3000))
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -8,9 +8,9 @@ export const saveBase64File = (base64: string, folder = 'absensi'): string => {
 
   const ext = matches[1].split('/')[1]; // jpg, png, dll
   const data = matches[2];
- 
-  const folderPath = join(__dirname, '..', 'public', 'uploads', folder);
- 
+  
+  const folderPath = join(process.cwd(), 'uploads', folder);
+
   if (!existsSync(folderPath)) {
     mkdirSync(folderPath, { recursive: true });
   }

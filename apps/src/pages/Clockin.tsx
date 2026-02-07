@@ -47,7 +47,7 @@ export default function Clockin(){
                     // form.setFieldsValue({ address: address?.display_name ?? "" });
                 },
                 (error) => {
-                    toast.error("Gagal ambil lokasi:"+ error.message)
+                    toast.error("Gagal ambil lokasi click allow location : "+ error.message)
                 },
                 {
                     enableHighAccuracy: true,

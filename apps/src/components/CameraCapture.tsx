@@ -1,5 +1,7 @@
+import { CameraOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => void, setOpen?: (payload:any) => void, open:boolean}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -8,16 +10,16 @@ const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => v
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    startCamera(); 
+    startCamera("user"); 
     return () => {
       stopCamera();
     };
   }, []);
 
-  const startCamera = async () => {
+  const startCamera = async (mode: string | "user" | "environment") => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },  
+        video: { facingMode: { ideal: mode } },  
         audio: false,
       });
 
@@ -27,7 +29,7 @@ const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => v
         videoRef.current.srcObject = stream;
       }
     } catch (err) {
-      console.error("Gagal buka kamera:", err);
+      toast.error("Gagal buka kamera:" + err);
     }
   };
 
@@ -53,7 +55,7 @@ const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => v
   };
   const clearPhoto =async ()=>{
     setImageBase64("")
-    await startCamera();
+    await startCamera("user");
   }
   useEffect(()=>{ 
     if(!open){
@@ -65,6 +67,16 @@ const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => v
     setFile?.(imageBase64 ?? "")
     setOpen?.(false)
     stopCamera();
+  }
+  const [type, settype] = useState<string>("user")
+  const changeCamera = async () => {
+    stopCamera();
+    if (type == "user") {
+      settype("environment")
+    }else{
+      settype("user") 
+    }
+    await startCamera(type)
   }
   return (
     <div className="flex flex-col items-center gap-4">
@@ -92,6 +104,10 @@ const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => v
 
       
       <div className="flex space-x-3">
+         <Button  onClick={changeCamera}  >
+          <CameraOutlined />
+            Ganti Kamera {type === 'user' ? 'belakang' : 'depan'}
+          </Button>
           {imageBase64 ? (
               <>
                 <Button  onClick={clearPhoto}  >
@@ -101,6 +117,7 @@ const CameraCapture = ({setFile,setOpen , open} : { setFile?: (payload:any) => v
               </>
           ):( 
             <Button
+            type="primary"
               onClick={capturePhoto} 
             >
               Ambil Foto

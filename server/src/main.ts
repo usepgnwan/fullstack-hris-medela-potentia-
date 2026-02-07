@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import * as express from 'express';
+import { MulterModule } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule); 
  
@@ -18,7 +19,13 @@ async function bootstrap() {
   
   // Setup endpoint Swagger UI (bisa diakses di /api)
   SwaggerModule.setup('api', app, document);
-  app.use('/uploads', express.static(join(__dirname, '..', 'public/uploads')));
+  
+  MulterModule.register({
+    dest: join(process.cwd(), 'uploads'),
+  });
+  
+  app.use( '/uploads', express.static(join(process.cwd(), 'uploads')),);
+  
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

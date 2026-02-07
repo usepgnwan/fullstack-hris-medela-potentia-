@@ -32,7 +32,10 @@ async findAllPaginated( take: number,   page: number,  filters?: { absensiId?: s
   const query = this.repo.createQueryBuilder('absensi')
     .innerJoinAndSelect('absensi.karyawan', 'karyawan') 
     .take(take)
-    .skip(skip);
+    .skip(skip)
+    .orderBy('absensi.date', 'DESC')
+    .addOrderBy('absensi.time', 'DESC')
+
  
   if (filters?.absensiId) {
     query.andWhere('absensi.id = :absensiId', { absensiId: filters.absensiId });

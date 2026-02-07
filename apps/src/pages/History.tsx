@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"; 
 import Platform from "../layouts/Platform";
-import { Button } from "antd";
+import { Button, Tabs } from "antd";
 import { LogoutOutlined,ClockCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../utils/api";
@@ -10,20 +10,25 @@ import CardAbsensi from "../components/CardAbsensi";
 import { Absensi } from "../../../server/interface";
 
 export default function History(){
-
+    
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState<Number>(1);
-    const user = authService.getCurrentUser();
+    const user = authService.getCurrentUser(); 
     const [loading, setloading] = useState(false);
-    const [data, setdata] = useState<Absensi[]>([]);
-
-    const getAbsenToday = async (page:number) =>{ 
-    const id = user.id;
-       const data = await api.get(`/absensi?limit=5&page=${page}`, {
-                params: {
-                    karyawanID: id 
-                },
-        });
+    const [data, setdata] = useState<Absensi[]>([]); 
+    const getAbsenToday = async (page:number, tab?:number ) =>{ 
+        const id = user.id;
+        let params = {} 
+        if (tab == 1){
+             params = {
+                        params: {
+                            karyawanID: id 
+                        }
+                    }
+        }else{
+            params = {}
+        }
+        const data = await api.get(`/absensi?limit=5&page=${page}`,params);
         if(page == 1){
             setdata((prev:any) => [  ...data.data.data ]);
        }else{
@@ -31,22 +36,47 @@ export default function History(){
        } 
        setHasMore(data.data.data.length>0)
     }
+    
+    const [activetab, setactivetab] = useState<string>("1")
     useEffect(()=>{
         (async()=>{
             setloading(true)
-            await getAbsenToday(1).then((v)=>{
+            await getAbsenToday(1,Number(activetab)).then((v)=>{
               
                 setloading(false)
             }).finally(()=>{
                 setloading(false);
             })
         })()
-    },[])
+    },[activetab])
     const loadMore =async () => {
         const nextPage = Number(page) + 1;
         setPage(nextPage);
-        await getAbsenToday(nextPage);
+        await getAbsenToday(nextPage, Number(activetab));
     };
+
+ 
+    
+    const TabsFilter = ({setTab} : {setTab?: (payload:any) => void}) => {
+      
+           const onChange =async (key: string) => {  
+                setTab?.(key) 
+            };
+        return (
+             <Tabs  activeKey={activetab} items={
+                            [
+                                {
+                                key: '1',
+                                label: 'Absensi saya'
+                                },
+                                {
+                                key: '2',
+                                label: 'Absensi Karayawan'
+                                }
+                            ]
+                            } onChange={async(v)=> await onChange(v)} />
+        )
+    }
     return (
         <React.Fragment> 
             <Platform>
@@ -54,6 +84,9 @@ export default function History(){
                 
                     <div>
                         <h4 className="text-lg font-semibold">History Absensi</h4>
+                        {user.role == "HR" && ( 
+                           <TabsFilter setTab={setactivetab} />
+                        )}
                         <div>
                             {!loading && data.length <= 0 ?(
                                 <NotReady />

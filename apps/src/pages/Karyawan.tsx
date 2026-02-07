@@ -107,7 +107,7 @@ export default function Karyawan(){
                                                 </div>
                                                 <div className="flex flex-col leading-tight">
                                                     <p className="font-medium">{v.nama}</p> 
-                                                    <p className="font-medium">{v.jabatan}</p> 
+                                                    <small className="text-gray-500">{v.jabatan}</small> 
                                                 </div>
                                             </div>
                                         )

@@ -3,13 +3,13 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
 import Maps from "./Maps";
+import { Absensi as IAbsensi } from "../../../server/interface";
 
 dayjs.extend(customParseFormat);
 const Absensi = ({data, setOpen,setDetail}:{data:any, setOpen?: (payload:any) => void, setDetail?: (payload:any) => void}) =>{ 
     const showdetail = () => {
         setOpen?.(true)
         setDetail?.(data)
-        console.log(data);
     }
     return (
         <div className="border rounded-2xl p-4 cursor-pointer" onClick={showdetail}>
@@ -25,6 +25,8 @@ const Absensi = ({data, setOpen,setDetail}:{data:any, setOpen?: (payload:any) =>
                         )}
                         <p className="text-lg font-semibold">{ dayjs(data.time, "HH:mm:ss").format("HH:mm") ?? "00:00"}</p>
                     </div>
+                    
+                    <p>{data?.karyawan !== undefined ?data.karyawan.nama :"" }</p>
                     <p className="line-clamp-2">{data.address??""}</p>
                     <div className="grid grid-cols-2 mt-2">
                         <p className="text-xs col-span-2">{data.date??""}</p>
@@ -39,18 +41,8 @@ const Absensi = ({data, setOpen,setDetail}:{data:any, setOpen?: (payload:any) =>
 
 export default function CardAbsensi({ data }: { data: any[] }) {
     const [open,setOpen] = useState(false);
-    type AbsensiDetail = {
-        lat?: number;
-        lng?: number;
-        address?: string;
-        time?: string;
-        file?: string;
-        date?: string;
-        catatan?: string;
-        [key: string]: any;  
-    };
 
-    const [detail, setDetail] = useState<AbsensiDetail>({});
+    const [detail, setDetail] = useState<Partial<IAbsensi>>({});
     return (
         <>
         <div className="space-y-3">
@@ -72,12 +64,14 @@ export default function CardAbsensi({ data }: { data: any[] }) {
             >  
                 <div className="p-4  space-y-5  ">
                     <div className="text-center font-bold text-3xl flex  justify-center flex-col px-4 rounded-2xl  border bg-green-500 text-white py-2">
-                        <span>{detail.type}</span>
+                        <span>{detail.type?.toUpperCase()}</span>
+                        <hr className="my-2"/>
+                        <span>{detail?.karyawan !== undefined ?detail.karyawan.nama :"" }</span>
                         <span>{detail.date}</span>
                     <span>    { dayjs(detail.time, "HH:mm:ss").format("HH:mm") ?? "00:00" }</span>
                     </div>
                     {open && detail.lat  !== undefined && detail.lng !== undefined && ( 
-                        <Maps lat={detail.lat??0} lang={detail.lng??0} address={detail?.address ?? ''} /> 
+                        <Maps lat={Number(detail.lat??0)} lang={Number(detail.lng??0)} address={detail?.address ?? ''} /> 
                     )} 
                     <img src={detail.file} className="w-full" />
                     <div >
